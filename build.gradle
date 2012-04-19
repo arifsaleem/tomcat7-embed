@@ -1,0 +1,71 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'tomcat'
+
+sourceCompatibility = 1.6
+version = '1.0'
+
+
+buildscript {
+    repositories {
+        add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+            name = 'GitHub'
+            addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+        }
+    }
+
+    dependencies {
+        classpath 'bmuschko:gradle-tomcat-plugin:0.9.1'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'src/main/java'
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Spring External Configuration', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def springVersion = '3.1.1.RELEASE'
+    def slf4jVersion = "1.5.10"
+    def tomcatVersion = '7.0.27'
+
+    // Spring and dependencies
+    compile "org.springframework:spring-context:${springVersion}",
+            "org.springframework:spring-webmvc:${springVersion}"
+    compile "cglib:cglib:2.2.2"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+
+    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
+
+    providedCompile 'javax.servlet:javax.servlet-api:3.0.1',
+                    'javax.servlet.jsp:javax.servlet.jsp-api:2.2.1'
+
+    // Tomcat
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
+    // Testing
+    testCompile group: 'org.springframework', name: 'spring-test', version: springVersion
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+}
