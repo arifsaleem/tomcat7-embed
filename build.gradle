@@ -53,8 +53,6 @@ dependencies {
     compile "cglib:cglib:2.2.2"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
 
-    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
-
     providedCompile 'javax.servlet:javax.servlet-api:3.0.1',
                     'javax.servlet.jsp:javax.servlet.jsp-api:2.2.1'
 
